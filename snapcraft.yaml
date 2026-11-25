@@ -1,0 +1,39 @@
+name: icon-theme-oxygen
+build-base: core24
+base: bare
+version: "6.32.0"
+platforms:
+  all:
+    build-on: [amd64]
+    build-for: [all]
+summary: Oxygen icon theme
+description: |
+  A Snap that allows you to use Oxygen icon theme in Snap apps
+grade: stable
+confinement: strict
+compression: lzo
+
+slots:
+  icon-themes:
+    interface: content
+    source:
+      read:
+        - $SNAP/share/icons/oxygen
+
+parts:
+  oxygen-icons:
+    plugin: nil
+    source: https://invent.kde.org/frameworks/oxygen-icons.git
+    source-tag: v$SNAPCRAFT_PROJECT_VERSION
+    override-build: |
+      craftctl default
+      install -d "$CRAFT_PART_INSTALL/share/icons/oxygen/base"
+      install -d "$CRAFT_PART_INSTALL/usr/share/metainfo"
+      cp -r 8x8 16x16 22x22 32x32 48x48 64x64 128x128 256x256 "$CRAFT_PART_INSTALL/share/icons/oxygen/base/"
+      find "$CRAFT_PART_INSTALL/share/icons/oxygen/base/" -name "*.sh" -delete
+      cp -r applets simbolicActions "$CRAFT_PART_INSTALL/share/icons/oxygen/"
+      install -m 644 index.theme icon-settings.json "$CRAFT_PART_INSTALL/share/icons/oxygen/"
+      install -m 644 org.kde.oxygenicon.metainfo.xml "$CRAFT_PART_INSTALL/usr/share/metainfo/"
+    prime:
+      - share/icons/
+      - usr/share/metainfo/
